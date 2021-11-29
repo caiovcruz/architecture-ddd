@@ -1,0 +1,10 @@
+﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+
+namespace ArchitectureDDD.Domain
+{
+    public class Role : BaseEntity
+    {
+        public string Name { get; set; }
+    }
+}

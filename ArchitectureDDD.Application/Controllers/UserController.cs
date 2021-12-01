@@ -5,10 +5,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArquictectureDDD.Application.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : CrudBaseController<User, UserViewModel, UserValidator>
     {
-        public UserController(IBaseService<User> baseService) : base(baseService) { }
+        public UserController(IUserService userService) : base(userService) { }
+
+        [AllowAnonymous]
+        public override IActionResult Create([FromBody] UserViewModel viewModel)
+        {
+            return base.Create(viewModel);
+        }
     }
 }

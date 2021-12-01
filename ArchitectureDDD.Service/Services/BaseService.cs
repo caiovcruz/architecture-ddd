@@ -8,9 +8,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArchitectureDDD.Service.Services
+namespace ArchitectureDDD.Service
 {
-    public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : BaseEntity
+    public class BaseService<TEntity, TViewModel> : IBaseService<TEntity, TViewModel> where TEntity : BaseEntity
+                                                                                      where TViewModel : BaseViewModel
     {
         private readonly IBaseRepository<TEntity> _baseRepository;
         private readonly IMapper _mapper;
@@ -21,56 +22,39 @@ namespace ArchitectureDDD.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<TOutputModel> Add<TInputModel, TOutputModel, TValidator>(TInputModel inputModel)
-            where TValidator : AbstractValidator<TEntity>
-            where TInputModel : class
-            where TOutputModel : class
-        {
-            TEntity entity = _mapper.Map<TEntity>(inputModel);
 
-            Validate(entity, Activator.CreateInstance<TValidator>());
+        public async Task<TViewModel> Add<TValidator>(TViewModel viewModel) where TValidator : AbstractValidator<TViewModel>
+
+        {
+            await Activator.CreateInstance<TValidator>().ValidateAndThrowAsync(viewModel);
+
+            TEntity entity = _mapper.Map<TEntity>(viewModel);
 
             await _baseRepository.Add(entity);
 
-            return _mapper.Map<TOutputModel>(entity);
+            return _mapper.Map<TViewModel>(entity);
         }
 
-        public async Task<TOutputModel> Update<TInputModel, TOutputModel, TValidator>(TInputModel inputModel)
-            where TValidator : AbstractValidator<TEntity>
-            where TInputModel : class
-            where TOutputModel : class
-        {
-            TEntity entity = _mapper.Map<TEntity>(inputModel);
 
-            Validate(entity, Activator.CreateInstance<TValidator>());
+        public async Task<TViewModel> Update<TValidator>(TViewModel viewModel) where TValidator : AbstractValidator<TViewModel>
+
+        {
+            await Activator.CreateInstance<TValidator>().ValidateAndThrowAsync(viewModel);
+
+            TEntity entity = _mapper.Map<TEntity>(viewModel);
 
             await _baseRepository.Update(entity);
 
-            return _mapper.Map<TOutputModel>(entity);
+            return _mapper.Map<TViewModel>(entity);
         }
 
-        public Task Delete(int id) => _baseRepository.Delete(id);
 
-        public async Task<IEnumerable<TOutputModel>> GetAll<TOutputModel>() where TOutputModel : class
-        {
-            var entities = await _baseRepository.GetAll();
+        public async Task Delete(int id) => await _baseRepository.Delete(id);
 
-            return _mapper.Map<IEnumerable<TOutputModel>>(entities);
-        }
 
-        public async Task<TOutputModel> GetById<TOutputModel>(int id) where TOutputModel : class
-        {
-            var entity = await _baseRepository.GetByIdAsync(id);
+        public async Task<IEnumerable<TViewModel>> GetAll() => _mapper.Map<IEnumerable<TViewModel>>(await _baseRepository.GetAll());
 
-            return _mapper.Map<TOutputModel>(entity);
-        }
 
-        private void Validate(TEntity entity, AbstractValidator<TEntity> validator)
-        {
-            if (entity == null)
-                throw new Exception("Registros não detectados!");
-
-            validator.ValidateAndThrow(entity);
-        }
+        public async Task<TViewModel> GetById(int id) => _mapper.Map<TViewModel>(await _baseRepository.GetByIdAsync(id));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ArchitectureDDD.Domain;
 using AutoMapper;
 
-namespace ArchitectureDDD.Service.Helpers
+namespace ArchitectureDDD.Service
 {
     public class ArchitectureDDDProfile : Profile
     {
@@ -10,6 +10,7 @@ namespace ArchitectureDDD.Service.Helpers
             CreateMap<UserViewModel, User>().ReverseMap();
             CreateMap<RoleViewModel, Role>().ReverseMap();
             CreateMap<UserRoleViewModel, UserRole>().ReverseMap();
+            CreateMap<UserLoginViewModel, UserLogin>().ReverseMap();
         }
     }
 }

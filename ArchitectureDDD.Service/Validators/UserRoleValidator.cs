@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace ArchitectureDDD.Service
 {
-    public class UserRoleValidator : AbstractValidator<UserRole>
+    public class UserRoleValidator : AbstractValidator<UserRoleViewModel>
     {
         public UserRoleValidator()
         {

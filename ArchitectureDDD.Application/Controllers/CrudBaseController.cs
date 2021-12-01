@@ -8,31 +8,31 @@ namespace ArquictectureDDD.Application.Controllers
     public abstract class CrudBaseController<TEntity, TViewModel, TValidator> : ControllerBase
                                                                        where TEntity : BaseEntity
                                                                        where TViewModel : BaseViewModel
-                                                                       where TValidator : AbstractValidator<TEntity>
+                                                                       where TValidator : AbstractValidator<TViewModel>
     {
-        private readonly IBaseService<TEntity> _baseService;
+        private readonly IBaseService<TEntity, TViewModel> _baseService;
 
-        public CrudBaseController(IBaseService<TEntity> baseService)
+        public CrudBaseController(IBaseService<TEntity, TViewModel> baseService)
         {
             _baseService = baseService;
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] TEntity viewModel)
+        public virtual IActionResult Create([FromBody] TViewModel viewModel)
         {
             if (viewModel == null)
                 return NotFound();
 
-            return Execute(() => _baseService.Add<TEntity, TViewModel, TValidator>(viewModel).Result);
+            return Execute(() => _baseService.Add<TValidator>(viewModel).Result);
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] TEntity viewModel)
+        public IActionResult Update([FromBody] TViewModel viewModel)
         {
             if (viewModel == null)
                 return NotFound();
 
-            return Execute(() => _baseService.Update<TEntity, TViewModel, TValidator>(viewModel).Result);
+            return Execute(() => _baseService.Update<TValidator>(viewModel).Result);
         }
 
         [HttpDelete]
@@ -53,7 +53,7 @@ namespace ArquictectureDDD.Application.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Execute(() => _baseService.GetAll<TViewModel>().Result);
+            return Execute(() => _baseService.GetAll().Result);
         }
 
         [HttpGet("{id}")]
@@ -62,7 +62,7 @@ namespace ArquictectureDDD.Application.Controllers
             if (id == 0)
                 return NotFound();
 
-            return Execute(() => _baseService.GetById<TViewModel>(id).Result);
+            return Execute(() => _baseService.GetById(id).Result);
         }
 
         /// <summary>

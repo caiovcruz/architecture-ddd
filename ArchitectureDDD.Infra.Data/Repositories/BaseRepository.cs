@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ArchitectureDDD.Infra.Data
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         protected readonly ApplicationDbContext _context;
 
@@ -22,6 +22,7 @@ namespace ArchitectureDDD.Infra.Data
             await _context.Set<TEntity>().AddAsync(entity);
             await _context.SaveChangesAsync();
         }
+
         public virtual Task Update(TEntity entity)
         {
             _context.Entry(entity).State = EntityState.Modified;

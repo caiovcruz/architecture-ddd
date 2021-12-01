@@ -4,22 +4,19 @@ using System.Threading.Tasks;
 
 namespace ArchitectureDDD.Domain
 {
-    public interface IBaseService<TEntity> where TEntity : BaseEntity
+    public interface IBaseService<TEntity, TViewModel> where TEntity : BaseEntity
+                                                       where TViewModel : BaseViewModel
     {
-        Task<TOutputModel> Add<TInputModel, TOutputModel, TValidator>(TInputModel inputModel)
-            where TValidator : AbstractValidator<TEntity>
-            where TInputModel : class
-            where TOutputModel : class;
+        Task<TViewModel> Add<TValidator>(TViewModel viewModel)
+            where TValidator : AbstractValidator<TViewModel>;
 
-        Task<TOutputModel> Update<TInputModel, TOutputModel, TValidator>(TInputModel inputModel)
-            where TValidator : AbstractValidator<TEntity>
-            where TInputModel : class
-            where TOutputModel : class;
+        Task<TViewModel> Update<TValidator>(TViewModel viewModel)
+            where TValidator : AbstractValidator<TViewModel>;
 
         Task Delete(int id);
 
-        Task<TOutputModel> GetById<TOutputModel>(int id) where TOutputModel : class;
+        Task<TViewModel> GetById(int id);
 
-        Task<IEnumerable<TOutputModel>> GetAll<TOutputModel>() where TOutputModel : class;
+        Task<IEnumerable<TViewModel>> GetAll();
     }
 }

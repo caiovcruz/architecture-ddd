@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-
-namespace ArchitectureDDD.Domain
+﻿namespace ArchitectureDDD.Domain
 {
     public class User : BaseEntity
     {
